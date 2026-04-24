@@ -44,49 +44,58 @@ public class Main {
         System.out.printf("%5s %-10s %-55s %-15s %s %n", "SKU","", "Name of Product", "Price", "Department");
         System.out.println("-".repeat(100));
     }
-
-    private static void incrementProductPage(int counter,int currentPageNum){
-        int numOfItemsLeft = inventory.size() - counter;
-        if (numOfItemsLeft <= 0){
-            System.out.println("You have reached the Last page :( Enter a Different option.");
+    private static boolean pageExists(int currentPageNum){
+        int lastPage;
+        if (inventory.size() % 10 == 0){
+            lastPage = inventory.size() / 10;
+        }else{
+            lastPage = (inventory.size() / 10) + 1;
         }
-        else if (currentPageNum < 1){
+        if (lastPage < currentPageNum){
+            System.out.println("You have reached the last page :( Please enter another option.");
+            return false;
+        }else if (currentPageNum < 1){
             System.out.println("You are currently on Page 1. Choose another option.");
+            return false;
         }
-        else if (numOfItemsLeft >= 10) {
-            productHeader(currentPageNum);
+        return true;
+    }
+
+    private static void incrementProductPage(int currentPageNum){
+        int previousItemsDisplayed = (currentPageNum * 10) - 10;
+        int numOfItemsLeft = inventory.size() - previousItemsDisplayed;
+        productHeader(currentPageNum);
+        if (numOfItemsLeft >= 10) {
             for (int i = ((currentPageNum * 10) - 10); i < (currentPageNum * 10); i++ ){
                 System.out.println(inventory.get(i));
-                numOfItemsLeft-= 1;
             }
         }
         else{
-            System.out.printf("%50s %d %n", "Page", currentPageNum);
-            productHeader(currentPageNum);
-            int lastItemIndex = numOfItemsLeft;
-            for (int i = ((currentPageNum * 10) - 10); i < ((currentPageNum * 10) - lastItemIndex); i++ ){
+            for (int i = previousItemsDisplayed; i < previousItemsDisplayed + numOfItemsLeft; i++) {
                 System.out.println(inventory.get(i));
-                numOfItemsLeft-= 1;
             }
         }
+
     }
+    
     private static void displayAllProducts(){
         String option;
-        int counter = 0;
         int pageNum = 1;
-        incrementProductPage(counter, pageNum);
+        incrementProductPage(pageNum);
         do {
-            option = Console.promptForString("[B] Previous Page [N] Next Page [A] Add item to Cart [X] Main Menu \n> ");
+            option = Console.promptForString("[P] Previous Page [N] Next Page [A] Add item to Cart [X] Main Menu \n> ");
             switch(option.toUpperCase()){
-                case "B":
-                    counter-= 10;
-                    pageNum--;
-                    incrementProductPage(counter, pageNum);
+                case "P":
+                    if (pageExists(pageNum - 1)) {
+                        pageNum--;
+                        incrementProductPage(pageNum);
+                    }
                     break;
                 case "N":
-                    counter+= 10;
-                    pageNum++;
-                    incrementProductPage(counter, pageNum);
+                    if (pageExists(pageNum + 1)) {
+                        pageNum++;
+                        incrementProductPage(pageNum);
+                    }
                     break;
                 case "A":
                     //Add item to cart
