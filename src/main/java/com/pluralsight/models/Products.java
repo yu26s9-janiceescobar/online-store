@@ -6,6 +6,13 @@ public class Products {
     private double price;
     private String department;
 
+    /**
+     * Creates a product with SKU, name, price, and department.
+     * @param sku
+     * @param name
+     * @param price
+     * @param department
+     */
     public Products(String sku, String name, double price, String department){
         this.sku = sku;
         this.name = name;
@@ -29,6 +36,10 @@ public class Products {
         return department;
     }
 
+    /**
+     * Formats product information into a formatted string.
+     * @return the String containing product information.
+     */
     @Override
     public String toString(){
         return String.format("%-15s %-55s $%,-15.2f %s", sku, name, price, department);
